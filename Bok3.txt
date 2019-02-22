@@ -1,0 +1,68 @@
+Albania	Algeria	Argentina	Bangladesh	Bosnia	and	Herzegovina	Canada	Chile	China	Egypt	India	Indonesia	Iran	Iraq	Israel	Japan	Jordan	Kyrgyzstan	Macedonia	Mexico	Moldova	Montenegro	Morocco	Nigeria	Pakistan	Peru	Philippines	Puerto	Rico	Saudi	Arabia	Serbia	Singapore	South	Africa	South	Korea	Spain	Sweden	Tanzania	Turkey	Uganda	United	States	Venezuela	Viet	Nam	Zimbabwe																						
+Albania	Argentina	Armenia	Australia	Azerbaijan	Bangladesh	Belarus	Bosnia	and	Herzegovina	Brazil	Bulgaria	Colombia	Colombia	Croatia	Czech	Republic	Chile	China	Dominican	Republic	El	Salvador	Estonia	Finland	Georgia	Germany	East	Germany	West	Great	Britain	Hungary	India	Japan	Latvia	Lithuania	Macedonia	Mexico	Moldova	Montenegro	New	Zealand	Nigeria	Norway	Pakistan	Peru	Philippines	Poland	Puerto	Rico	Romania	Russian	Federation	Serbia	Slovakia	Slovenia	South	Africa	South	Korea	Spain	Sweden	Switzerland	Taiwan	Turkey	Ukraine	United	States	Uruguay	Venezuela
+Algeria	Argentina	Armenia	Australia	Azerbaijan	Belarus	Brazil	Colombia	Cyprus	Chile	China	Ecuador	Egypt	Estonia	Georgia	Germany	Ghana	Haiti	Hong	Kong	India	Iraq	Japan	Jordan	Kazakhstan	Kuwait	Kyrgyzstan	Lebanon	Libya	Malaysia	Mexico	Morocco	Netherlands	New	Zealand	Nigeria	Pakistan	Palestine	Peru	Philippines	Poland	Qatar	Romania	Russian	Federation	Rwanda	Singapore	Slovenia	South	Africa	South	Korea	Spain	Sweden	Taiwan	Thailand	Trinidad	and	Tobago	Tunisia	Turkey	Ukraine	United	States	Uruguay	Uzbekistan	Yemen	Zimbabwe			
+Andorra	Argentina	Australia	Brazil	Bulgaria	Burkina	Faso	Canada	Colombia	Cyprus	Chile	China	Egypt	Ethiopia	Finland	France	Georgia	Germany	Ghana	Guatemala	Hong	Kong	Hungary	India	Indonesia	Iran	Iraq	Italy	Japan	Jordan	Malaysia	Mali	Mexico	Moldova	Morocco	Netherlands	New	Zealand	Norway	Peru	Poland	Romania	Russian	Federation	Rwanda	Serbia	Slovenia	South	Africa	South	Korea	Spain	Sweden	Switzerland	Taiwan	Thailand	Trinidad	and	Tobago	Turkey	Ukraine	United	Kingdom	United	States	Uruguay	Viet	Nam	Zambia		
+Argentina	Belarus	Brazil	Czech	Republic	Chile	China	India	Japan	Mexico	Nigeria	Poland	Russian	Federation	Slovakia	South	Africa	South	Korea	Spain	Switzerland	Turkey																																																	
+																																																																						
+																																																																						
+Romania																																																																						
+States																																																																						
+Sweden																																																																						
+Pakistan																																																																						
+Switzerland																																																																						
+Australia																																																																						
+Egypt																																																																						
+Morocco																																																																						
+																																																																						
+Serbia																																																																						
+Moldova																																																																						
+Ukraine																																																																						
+Iraq																																																																						
+Taiwan																																																																						
+Peru																																																																						
+Jordan																																																																						
+																																																																						
+Nigeria																																																																						
+New																																																																						
+Brazil																																																																						
+																																																																						
+Colombia																																																																						
+Germany																																																																						
+Georgia																																																																						
+Russian																																																																						
+Uruguay																																																																						
+Argentina																																																																						
+Philippines																																																																						
+Zealand																																																																						
+Slovenia																																																																						
+Belarus																																																																						
+Poland																																																																						
+0																																																																						
+inge@DESKTOP-4T1DH72:/mnt/c/Users/lilla/ivis$ python3 fuck.py																																																																						
+Sweden																																																																						
+Peru																																																																						
+Colombia																																																																						
+Morocco																																																																						
+Iraq																																																																						
+Nigeria																																																																						
+Serbia																																																																						
+Switzerland																																																																						
+Georgia																																																																						
+Belarus																																																																						
+Brazil																																																																						
+Russian																																																																						
+Slovenia																																																																						
+Australia																																																																						
+																																																																						
+Uruguay																																																																						
+Taiwan																																																																						
+Philippines																																																																						
+Poland																																																																						
+Moldova																																																																						
+Argentina																																																																						
+Romania																																																																						
+Egypt																																																																						
+Zealand																																																																						
+Pakistan																																																																						
+Jordan																																																																						
+Ukraine																																																																						
