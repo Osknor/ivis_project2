@@ -112,6 +112,28 @@ var parcoords = ParCoords()("#example")
 var h2010 = function(file){
   svg.selectAll('text').remove();
 d3.csv(file).then(function(data) {
+  var coords = [];
+    var xs = [];
+    var ys = []
+    for (i = 0; i<data.length;i++) {
+        ////console.log(pixelLoc([Number(countries[i].longitude),Number(countries[i].latitude)])[0],countries[i])
+      xs.push(pixelLoc([Number(data[i].longitude),Number(data[i].latitude)])[0]);
+      ys.push(pixelLoc([Number(data[i].longitude),Number(data[i].latitude)])[1]);
+    }
+    //console.log(xs)
+    var minX = d3.min(xs);
+    var maxX = d3.max(xs);
+    //console.log(minX,maxX,"def")
+
+   var xScale = d3.scaleLinear().domain([minX,maxX]).range([50, width-50]);
+
+    var minY = d3.min(ys);
+    var maxY = d3.max(ys);
+    var yScale = d3.scaleLinear().domain([minY,maxY]).range([50, height-50]);
+    //console.log(pixelLoc([0,0]),"pling")
+    //console.log(pixelLoc([180,89]))
+    var pointScale = d3.scaleSqrt().domain([0, 100]).range([0, 32]);
+
   parcoords
     .data(data)
     .dimensions(dimensions)
@@ -195,13 +217,18 @@ d3.csv(file).then(function(data) {
   // update data table on brush event
   parcoords.on("brush", function(d) {
     //console.log(d);
+    //console.log(d);
     // var newNodes = createNodes(d);
-    // var u = svg.selectAll('circle')
-    // .data(newNodes);
+     animator(d);
+     //svg.selectAll("text").raise();
+
+
+
+
     d3.select("#grid")
       .datum(d)
       .call(grid)
-      .selectAll(".row")
+      .selectAll(".grow")
       var rows = d3.select('#grid').selectAll('.grow');
   rows.on("mouseover", function(d) {
               var farg = "color :"+colors(d.continent);
@@ -228,48 +255,24 @@ d3.csv(file).then(function(data) {
         parcoords.unhighlight();});
   });
   //console.log(d3.select("#grid").selectAll("row").attr("adsf","blee"))
-  var coords = [];
-    var xs = [];
-    var ys = []
-    for (i = 0; i<data.length;i++) {
-        ////console.log(pixelLoc([Number(countries[i].longitude),Number(countries[i].latitude)])[0],countries[i])
-      xs.push(pixelLoc([Number(data[i].longitude),Number(data[i].latitude)])[0]);
-      ys.push(pixelLoc([Number(data[i].longitude),Number(data[i].latitude)])[1]);
-    }
-    //console.log(xs)
-    var minX = d3.min(xs);
-    var maxX = d3.max(xs);
-    //console.log(minX,maxX,"def")
-
-   var xScale = d3.scaleLinear().domain([minX,maxX]).range([50, width-50]);
-
-    var minY = d3.min(ys);
-    var maxY = d3.max(ys);
-    var yScale = d3.scaleLinear().domain([minY,maxY]).range([50, height-50]);
-    //console.log(pixelLoc([0,0]),"pling")
-    //console.log(pixelLoc([180,89]))
-    var pointScale = d3.scaleSqrt().domain([0, 100]).range([0, 32]);
-
-  
+  var animator = function(data){
   var u = svg.selectAll('circle')
     .data(data,(item,i,k)=> {
   //console.log(countries)
-      console.log(item,i,k,"wadå")
-      nodes = []
+      //console.log(item,i,k,"wadå")
         //console.log(item)
-        node = item;
         ////console.log(node)
-        knas = pixelLoc([Number(node.longitude),Number(node.latitude)])[0]
+        knas = pixelLoc([Number(item.longitude),Number(item.latitude)])[0]
         ////console.log(knas,pixelLoc,"här e knas")
-        node.x = xScale(knas);
+        item.x = xScale(knas);
         ////console.log(node.x,'vadå')
-        extra = pixelLoc([Number(node.longitude),Number(node.latitude)])[1]
+        extra = pixelLoc([Number(item.longitude),Number(item.latitude)])[1]
         ////console.log(extra,pixelLoc)
-        node.y = yScale(extra);
+        item.y = yScale(extra);
         ////console.log(node.y,'jamen')
-        node.radius = pointScale((Number(node.leader)));
+        item.radius = pointScale((Number(item.leader)));
         
-    return node.index})
+    return item})
     u.enter()
     .append('svg:circle')
     .attr('r', function(d) {
@@ -290,6 +293,18 @@ d3.csv(file).then(function(data) {
           parcoords.unhighlight();
           });
     u.exit().remove();
+
+    var v = svg.selectAll('text')
+      .data(data)
+      
+
+      v.enter().append('svg:text')
+        .text(function(d) {
+        return d.country;
+        })
+        .attr('text-anchor',"middle");
+
+      v.exit().remove();
     
       var simulation = d3.forceSimulation(data)
     .force('collision', d3.forceCollide().radius(function(d) {
@@ -304,22 +319,22 @@ d3.csv(file).then(function(data) {
     })
     .attr('cy', function(d) {
       return d.y
+    
     })
-
-    k.exit().remove()
-
-    var v = svg.selectAll('text')
-      .data(data)
+    var vv = svg.selectAll('text')
       
 
-      v.enter().append('svg:text')
-        .text(function(d) {
-        return d.country;
-        })
-        .attr('text-anchor',"middle")
-      .merge(v)
-      .attr('x', function(d) { return d.x; })
-      .attr('y', function(d) { return d.y+2; })
+    vv.merge(v)
+      .attr('x', function(d) {         if (isNaN(d.radius)) {
+          return 0;
+        }
+        ////console.log(node.radius,node.country)
+        return d.x; })
+      .attr('y', function(d) {        if (isNaN(d.radius)) {
+          return 0;
+        }
+        ////console.log(node.radius,node.country)
+        return d.y+2; })
       .attr('opacity', function(d) {
         if (isNaN(d.radius)) {
           return 0;
@@ -328,7 +343,13 @@ d3.csv(file).then(function(data) {
         return 1;
       });
       v.exit().remove();
+    k.exit().remove();
+
+  }
+
     }
+    animator(data);
+    //svg.selectAll("text").raise();
     var border = function(country,color1){
       var classen = "."+country.replace(" ","") 
       //console.log(classen)
