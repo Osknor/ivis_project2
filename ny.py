@@ -1,3 +1,7 @@
+länder = ['Argentina', 'Australia', 'Brazil', 'Chile', 'China', 'Colombia', 'Egypt', 'Georgia', 'India', 'Iraq', 'Japan', 'Jordan', 'Mexico', 'Moldova', 'Morocco', 'New Zealand', 'Peru','Poland', 'Romania', 'Russian Federation', 'Serbia', 'Slovenia', 'South Africa', 'South Korea', 'Spain', 'Sweden', 'Taiwan', 'Turkey', 'Ukraine', 'United States', 'Uruguay']
+
+
+
 old_data = open("ble.txt").read().split('\n')
 array = []
 for i in old_data:
@@ -9,7 +13,7 @@ print (array)
 settet = {"Yellow","Banana"}
 for sak in array:
     settet.update(sak)
-
+annanarray = []
 array2 = []
 for setSak in settet:
     c2 = 0
@@ -21,9 +25,10 @@ print (array2.sort())
 c3 = 0
 for inne in array2:
     if (inne[1]>= 3 ):
+        annanarray.append(inne[0])
         print(inne[0])
         c3 += 1
-
+print (annanarray)
 print (c3)
 '''
 settet.update(old_data)

@@ -1,0 +1,323 @@
+<!doctype html>
+<title>Linking to SlickGrid</title>
+
+<!-- SlickGrid -->
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+<link rel="stylesheet" href="lib/slickgrid/slick.grid.css" type="text/css"/>
+<link rel="stylesheet" href="lib/slickgrid/jquery-ui-1.8.16.custom.css" type="text/css"/>
+<link rel="stylesheet" href="lib/slickgrid/examples.css" type="text/css"/>
+<link rel="stylesheet" href="lib/slickgrid/slick.pager.css" type="text/css"/>
+<script src="lib/slickgrid/jquery-1.7.min.js"></script>
+<script src="lib/slickgrid/jquery.event.drag-2.0.min.js"></script>
+<script src="lib/slickgrid/slick.core.js"></script>
+<script src="lib/slickgrid/slick.grid.js"></script>
+<script src="lib/slickgrid/slick.pager.js"></script>
+<script src="lib/slickgrid/slick.dataview.js"></script>
+<!-- End SlickGrid -->
+
+<link rel="stylesheet" type="text/css" href="./parcoords.css">
+<link rel="stylesheet" type="text/css" href="style.css">
+<style>
+body, html {
+  margin: 0;
+  height: 100%;
+  width: 100%;
+  font-size: 12px;
+}
+#grid, #pager {
+
+  width: 100%;
+}
+#grid {
+  height: 300px;
+}
+
+#pager {
+  bottom: 306px;
+  height: 20px;
+}
+.slick-row:hover {
+  font-weight: bold;
+}
+.slick-header-column{
+  width: 200px;
+}
+#example{
+  height: 400px;
+  width: 800px;
+  display: block;
+}
+#map{
+  border:1px;
+  border-color:black;
+  display: block;
+}
+</style>
+<script src="lib/d3.v5.min.js"></script>
+<script src="./parcoords.standalone.js"></script>
+<script src="lib/divgrid.js"></script>
+<div class = "row">
+<div id="example" class="parcoords col s6 container"></div>
+<div id="map" class ="col s6 container"></div>
+</div>
+<div class="container">
+<div id="grid"></div>
+</div>
+
+
+<script id="brushing">
+var width = 500;
+var height = 400;
+var padding = 10;
+var k;
+var node;
+
+var pixelLoc = d3.geoMercator();
+
+var colors = d3.scaleOrdinal()
+   .domain(["Europe","South America","North America","Asia","Africa","Oceania"])
+   .range(["#5E4FA2", "#3288BD", "#66C2A5", "#ABDDA4", "#E6F598", 
+   "#FFFFBF"]);
+
+
+ svg = d3.select('#map')
+         .append('svg:svg')
+         .attr('width', width)
+         .attr('height', height);
+
+
+var parcoords = ParCoords()("#example")
+    .alpha(0.4)
+    .color(d=> colors(d.continent))
+    .mode("queue") // progressive rendering
+    .margin({
+      top: 36,
+      left: 45,
+      right: 0,
+      bottom: 16
+    });
+
+    var dimensions = {
+                "country": {
+                    title: "Country",
+                },
+                "leader": {
+                    title: "Leader",
+                    scale: 'linear',
+                },
+                "tech": {
+                    title: "Tech",
+                },
+                "proud": {
+                    title: "Proud",
+              },
+              "trust": {
+                    title: "Trust",
+                },
+                "jobs": {
+                    title: "Jobs",
+                },
+                "politics": {
+                    title: "Politics",
+                },
+                "war": {
+                    title: "War",
+                },
+            };
+
+// load csv file and create the chart
+d3.csv('20055.csv').then(function(data) {
+  // slickgrid needs each data element to have an id
+  data.forEach(function(d,i) { d.id = d.id || i; });
+
+  parcoords
+    .data(data)
+    .dimensions(dimensions)
+    .render()
+    .reorderable()
+    .brushMode("2D-strums");
+
+  // setting up grid
+  console.log(d3.values(dimensions).map(d=> d.title),"BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB")
+  var column_keys = d3.keys(dimensions);
+  var columns = column_keys.map(function(key,i) {
+    return {
+      id: key,
+      name: dimensions[key].title,
+      field: key,
+      sortable: true
+    }
+  });
+
+  var options = {
+    enableCellNavigation: true,
+    enableColumnReorder: false,
+    multiColumnSort: false
+  };
+
+  var dataView = new Slick.Data.DataView();
+  var grid = new Slick.Grid("#grid", dataView, columns, options);
+
+  // wire up model events to drive the grid
+  dataView.onRowCountChanged.subscribe(function (e, args) {
+    grid.updateRowCount();
+    grid.render();
+  });
+
+  dataView.onRowsChanged.subscribe(function (e, args) {
+    grid.invalidateRows(args.rows);
+    grid.render();
+  });
+
+  // column sorting
+  var sortcol = column_keys[0];
+  var sortdir = 1;
+
+  function comparer(a, b) {
+    var x = a[sortcol], y = b[sortcol];
+    return (x == y ? 0 : (x > y ? 1 : -1));
+  }
+  
+  // click header to sort grid column
+  grid.onSort.subscribe(function (e, args) {
+    sortdir = args.sortAsc ? 1 : -1;
+    sortcol = args.sortCol.field;
+
+    if ($.browser.msie && $.browser.version <= 8) {
+      dataView.fastSort(sortcol, args.sortAsc);
+    } else {
+      dataView.sort(comparer, args.sortAsc);
+    }
+  });
+
+  // highlight row in chart
+  grid.onMouseEnter.subscribe(function(e,args) {
+    // Get row number from grid
+    var grid_row = grid.getCellFromEvent(e).row;
+    // Get the id of the item referenced in grid_row
+    var item_id = grid.getDataItem(grid_row).id;
+    var d = parcoords.brushed() || data;
+
+    // Get the element position of the id in the data object
+    elementPos = d.map(function(x) {return x.id; }).indexOf(item_id);
+
+    // Highlight that element in the parallel coordinates graph
+    parcoords.highlight([d[elementPos]]);
+    //var hilicolor = colors(d[elementPos].continent)
+    //$($('.grid-canvas').children()[grid_row]).css('color',hilicolor);
+    console.log($($('.grid-canvas').children()[grid_row]))
+  });
+
+  grid.onMouseLeave.subscribe(function(e,args) {
+    var grid_row = grid.getCellFromEvent(e).row;
+   // $($('.grid-canvas').children()[grid_row]).css('color','black');
+    parcoords.unhighlight();
+  });
+
+  // fill grid with data
+  gridUpdate(data);
+
+  // update grid on brush
+  parcoords.on("brush", function(d) {
+    gridUpdate(d);
+  });
+
+  function gridUpdate(data) {
+    dataView.beginUpdate();
+    dataView.setItems(data);
+    dataView.endUpdate();
+  };
+  console.log(data)
+    var coords = [];
+    var xs = [];
+    var ys = []
+    for (i = 0; i<data.length;i++) {
+        //console.log(pixelLoc([Number(data[i].longitude),Number(data[i].latitude)])[0],data[i])
+      xs.push(pixelLoc([Number(data[i].longitude),Number(data[i].latitude)])[0]);
+      ys.push(pixelLoc([Number(data[i].longitude),Number(data[i].latitude)])[1]);
+    }
+    console.log(xs)
+    var minX = d3.min(xs);
+    var maxX = d3.max(xs);
+    console.log(minX,maxX,"def")
+
+   var xScale = d3.scaleLinear().domain([minX,maxX]).range([40, width-30]);
+
+    var minY = d3.min(ys);
+    var maxY = d3.max(ys);
+    var yScale = d3.scaleLinear().domain([minY,maxY]).range([50, height-50]);
+    console.log(pixelLoc([0,0]),"pling")
+    console.log(pixelLoc([180,89]))
+      var pointScale = d3.scaleSqrt().domain([0, 100]).range([0, 30]);
+
+      nodes = []
+      for (i=0; i < data.length; i++) {
+        node = data[i];
+        console.log(node)
+        knas = pixelLoc([Number(node.longitude),Number(node.latitude)])[0]
+        console.log(knas,pixelLoc,"här e knas")
+        node.x = xScale(knas);
+        console.log(node.x,'vadå')
+        extra = pixelLoc([Number(node.longitude),Number(node.latitude)])[1]
+        console.log(extra,pixelLoc)
+        node.y = yScale(extra);
+        console.log(node.y,'jamen')
+        node.radius = pointScale((Number(node.leader)));
+        nodes.push(node);
+      }
+
+      var simulation = d3.forceSimulation(nodes)
+    .force('collision', d3.forceCollide().radius(function(d) {
+      return d.radius
+    }))
+    .on('tick', ticked);
+  function ticked() {
+   var u = svg.selectAll('circle')
+    .data(nodes)
+
+    u.enter()
+    .append('svg:circle')
+    .attr('r', function(d) {
+      return d.radius
+    })
+    .attr('class', function(node) {
+            return node.country.replace(' ', '');
+          })
+          .attr("fill", d=>{
+           return colors(d.continent)
+          })
+    .merge(u)
+    .attr('cx', function(d) {
+      return d.x
+    })
+    .attr('cy', function(d) {
+      return d.y
+    })
+    .exit().remove()
+
+    var v = svg.selectAll('text')
+      .data(nodes)
+
+      v.enter().append('svg:text')
+        .text(function(node) {
+        return node.country;
+        })
+        .attr('text-anchor',"middle")
+      .merge(v)
+      .attr('x', function(node) { return node.x; })
+      .attr('y', function(node) { return node.y+2; })
+      .attr('opacity', function(node) {
+        if (isNaN(node.radius)) {
+          return 0;
+        }
+        //console.log(node.radius,node.country)
+        return 1;
+      });
+    }
+
+});
+</script>
