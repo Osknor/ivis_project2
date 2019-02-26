@@ -1,11 +1,12 @@
 // http://bl.ocks.org/3687826
 d3.divgrid = function(config) {
-  console.log(config)
+  //console.log(config)
   var columns = [];
 
   var dg = function(selection) {
+    //console.log(d3.keys(config).map(d=> config[d].title))
     if (columns.length == 0)  columns = d3.keys(config) //d3.keys(selection.data()[0][0]);
-    console.log(config);
+    //console.log(config);
 
     // header
     selection.selectAll(".header")
@@ -19,14 +20,15 @@ d3.divgrid = function(config) {
     
     var header = selection.select(".header")
       .selectAll(".cell")
-      .data(columns);
+      .data(d3.keys(config).map(d=> config[d].title));
 
     header.enter().append("div")
       .attr("class", function(d,i) { return "col-" + i; })
       .classed("cell", true)
 
     selection.selectAll(".header .cell")
-      .text(function(d) { return d; });
+      .text(function(d) { 
+        return d; });
 
     header.exit().remove();
 

@@ -10,8 +10,8 @@
 .grow:nth-child(odd) { background: rgba(0,0,0,0.05); }
 .header { font-weight: bold;
  height: 20px; background: rgba(0,0,0,0.5); }
-.cell { float: left; overflow: hidden; white-space: nowrap; width: 100px; height: 18px; }
-.col-0 { width: 180px; }
+.cell { float: left; overflow: hidden; white-space: nowrap; width: 160px; height: 18px; }
+.col-0 { width: 140px; }
 
 #example{
   height: 400px;
@@ -22,27 +22,47 @@
 
   display: inline-block;
 }
+.hide {
+  display: none;
+}
 
 
 </style>
 <script src="https://d3js.org/d3.v5.min.js"></script>
 <script src="./parcoords.standalone.js"></script>
 <script src="lib/divgrid.js"></script>
+
 <div class = "row">
     <div id="example" class="parcoords col s6" ></div>
-    <div id="map" class ="col s6"></div>
+    <div id="map" class ="col s6"><div id = "firstDropdown"></div></div>
     </div>
 
-
+<p id = "Years"></p>
 <div id="grid"></div>
-<p>An extension of the <a href="brushing.html">bushing example</a> which links the chart to a data table. When hovering over the table, that row of data is highlighted in the chart. When brushing, the data in the table is updated.</p>
+<button id ="till2010" >2010</button>
+<button id ="till2005" >2005</button>
+<button id ="till2000" >1999</button>
+<button id ="till1995" >1995</button>
+<div class= "row" id = "radius">
+<button id ="byt" >Change what represents the radius of the circles:</button></div>
+<!--<p>An extension of the <a href="brushing.html">bushing example</a> which links the chart to a data table. When hovering over the table, that row of data is highlighted in the chart. When brushing, the data in the table is updated.</p>
 <p>The table is <a href="http://bl.ocks.org/3687826">divgrid</a>, a simple <a href="http://bost.ocks.org/mike/chart/">reusable chart</a> that follows <a href="http://bl.ocks.org/3808218">general update pattern I</a>.</p>
 <p>Divgrid isn't fast when updating with hundreds or thousands of rows, so <strong>only the first 10 rows of the data are shown</strong>. For better performance, use a more sophisticated data grid like <a href="https://github.com/mleibman/SlickGrid">SlickGrid</a>.</p>
 <p>There is an <a href="http://exposedata.com/parallel/">old example</a> of SlickGrid with parallel coordinates. In that version the SVG is a bottleneck. An example of SlickGrid with this library should appear in the next few weeks (Nov-Dec, 2012).</p>
-<button id ="2010" onclick="h2010('20155.csv')">2010</button>
-<button id ="2005" onclick="h2010('20055.csv')">2005</button>
-<button id ="2000" onclick="h2010('20005.csv')">2000</button>
-<button id ="1995" onclick="h2010('20000.csv')">1995</button>
+--></br>
+<th>Full questions were (included answers):</th>
+     <li>Having a strong leader who does not have  to bother with parliament and elections ( Very good + Fairly good )</li>
+     <li> More emphasis on the development of  technology (Good thing )</li>
+     <li> How proud of nationality ( Very proud + Quite proud ) </li>
+     <li>  Most people can be trusted ( Most people can be trusted)</li>
+     <li> When jobs are scarce, men should have more right to a job than women ( Agree )</li>
+     <li> Interest in politics ( Very interested + Somewhat intersted )</li>
+     <li> Willingness to fight for your country ( Yes )</li>
+     <input type="radio" name="tab" value="igotnone" onclick="show1();" />
+     Hide
+     <input type="radio" name="tab" value="igottwo" onclick="show2();" />
+     Show extra table
+     <div id="grid2" class="hide"></div>
 <script id="brushing">// quantitative color scale
   var width = 600;
   var height = 450;
@@ -54,8 +74,7 @@
   var filter =[];
  var colors = d3.scaleOrdinal()
     .domain(["Europe","South America","North America","Asia","Africa","Oceania"])
-    .range(["#5E4FA2", "#3288BD", "#66C2A5", "#ABDDA4", "#E6F598", 
-    "#FFFFBF"]);
+    .range(["#1b9e77","#d95f02","#7570b3","#e7298a","#66a61e","#e6ab02"]);
  
 
   svg = d3.select('#map')
@@ -80,60 +99,151 @@ var parcoords = ParCoords()("#example")
       right: 100,
       bottom: 16
     });
+    
     var dimensions = {
                 "country": {
                     title: "Country",
                 },
+                "continent":{
+                  title: "Continent"
+                },
+
                 "leader": {
-                    title: "Leader",
+                    title: "Strong leader",
                     scale: 'linear',
                 },
                 "tech": {
-                    title: "Tech",
+                    title: "Technology important",
                 },
                 "proud": {
-                    title: "Proud",
+                    title: "Proud of country",
                     //yscale: d3.scaleLinear().domain([100,0]).range([100, 0])
               },
               "trust": {
-                    title: "Trust",
+                    title: "Trust in other people",
                 },
                 "jobs": {
-                    title: "Jobs",
+                    title: "Jobs for men",
                 },
                 "politics": {
-                    title: "Politics",
+                    title: "Interest in politics",
                 },
                 "war": {
-                    title: "War",
+                    title: "Would fight in a war",
                 },
+
             };
+            var otherdim = {
+  
+  "cells": {
+      title: "Cell phone subscriptions (per 100 people)",
+  },
+  "co2": {
+      title: "Carbon dioxide emissions per capita",
+  },
+  "inequality": {
+      title: "GINI inequality index",
+      //yscale: d3.scaleLinear().domain([100,0]).range([100, 0])
+},
+"health": {
+      title: "Total health spending % CGP",
+  },
+  "urban": {
+      title: "Urban population (percent of total)",
+  },
+  "growth": {
+      title: "Annual population growth %",
+  },
+  "menwo": {
+      title: "Year in school 25 to 34 women / men",
+  },
+
+};
+
+
+    Object.assign(otherdim,dimensions)
+
+  d3.select("#radius")
+		.append("select").attr("id","thirdSelect")
+		.selectAll("option")
+        .data(d3.keys(dimensions).splice(2,8))
+        .enter()
+        .append("option")
+        .attr("value", function(d ){
+            return d;
+        })
+        .text(function(d){
+                    var svar= otherdim[d]["title"];
+            return svar;
+        })
+            d3.select("#firstDropdown")
+		.append("select").attr("id","firstSelect")
+		.selectAll("option")
+        .data(d3.keys(otherdim))
+        .enter()
+        .append("option")
+        .attr("value", function(d ){
+            return d;
+        })
+        .text(function(d){
+                    var svar= otherdim[d]["title"];
+            return svar;
+        })
+        d3.select("#firstDropdown")
+		.append("select").attr("id","secondSelect")
+		.selectAll("option")
+        .data(d3.keys(otherdim))
+        .enter()
+        .append("option")
+        .attr("value", function(d){
+            return d;
+        })
+        .text(function(d){
+                    var svar= otherdim[d]["title"];
+            return svar;
+        })
+        d3.select("#firstDropdown")
+        .append("button").attr("id","update").text("Update")
+        
 // load csv file and create the chart
-var h2010 = function(file){
-  svg.selectAll('text').remove();
+d3.csv("gap.csv").then( function (gap){
+    var yearsep = d3.nest().key(d=> {return d.year}).entries(gap);
+
+
+
+var h2010 = function(file,year){
+//.map(d => {return { d : yearsep[year][d]}})
+var years = ["Year :1995-1998","Year :1999-2004","Year :2005-2009","Year :2010-2014"]
+  d3.select("#Years").text(years[year]);
+
+
+
+  svg.selectAll("text").remove();
+  svg.selectAll("g").remove();
 d3.csv(file).then(function(data) {
+  for (i=0; i< data.length; i++){
+
+ ( Object.assign(data[i],yearsep[year].values[i]))
+
+  }
   var coords = [];
     var xs = [];
     var ys = []
     for (i = 0; i<data.length;i++) {
-        ////console.log(pixelLoc([Number(countries[i].longitude),Number(countries[i].latitude)])[0],countries[i])
-      xs.push(pixelLoc([Number(data[i].longitude),Number(data[i].latitude)])[0]);
-      ys.push(pixelLoc([Number(data[i].longitude),Number(data[i].latitude)])[1]);
+      xs.push(pixelLoc([parseFloat(data[i].longitude),parseFloat(data[i].latitude)])[0]);
+      ys.push(pixelLoc([parseFloat(data[i].longitude),parseFloat(data[i].latitude)])[1]);
     }
-    //console.log(xs)
     var minX = d3.min(xs);
     var maxX = d3.max(xs);
-    //console.log(minX,maxX,"def")
 
    var xScale = d3.scaleLinear().domain([minX,maxX]).range([50, width-50]);
 
     var minY = d3.min(ys);
     var maxY = d3.max(ys);
     var yScale = d3.scaleLinear().domain([minY,maxY]).range([50, height-50]);
-    //console.log(pixelLoc([0,0]),"pling")
-    //console.log(pixelLoc([180,89]))
     var pointScale = d3.scaleSqrt().domain([0, 100]).range([0, 32]);
-
+    
+    
   parcoords
     .data(data)
     .dimensions(dimensions)
@@ -148,12 +258,53 @@ d3.csv(file).then(function(data) {
       parcoords.scale(d, [0, 100])
       }
     });
+    //parcoords.rotateLabels(true);
 
   // create data table, row hover highlighting
   var grid = d3.divgrid(dimensions);
   d3.select("#grid")
     .datum(data)
     .call(grid);
+
+
+  function tabulate(data, columns) {
+    var table = d3.select("#grid2").append("table").attr("class", "table1")
+            .attr("style", "margin-left: 250px"),
+        thead = table.append("thead"),
+        tbody = table.append("tbody");
+
+    // append the header row
+    thead.append("tr")
+        .selectAll("th")
+        .data(columns)
+        .enter()
+        .append("th")
+            .text(function(column) { return column; });
+
+    // create a row for each object in the data
+    var rows = tbody.selectAll("tr")
+        .data(data)
+        .enter()
+        .append("tr");
+
+    // create a cell in each row for each column
+    var cells = rows.selectAll("td")
+        .data(function(row) {
+            return columns.map(function(column) {
+                return {column: column, value: row[column]};
+            });
+        })
+        .enter()
+        .append("td")
+        .attr("style", "font-family: Courier") // sets the font style
+            .html(function(d) { return d.value; });
+    
+    return table;
+}
+
+// render the table
+d3.select(".table1").remove();
+ var peopleTable = tabulate(yearsep[year].values, d3.keys(yearsep[year].values[0]));
 
   var rows = d3.select('#grid').selectAll('.grow');
   rows.on("mouseover", function(d) {
@@ -163,15 +314,13 @@ d3.csv(file).then(function(data) {
                rowen = d3.event.target;
               };
       if(rowen.checked){}else{
-              //console.log(rowen.checked);
               var farg = "color :"+colors(d.continent);
               if (d3.event.target.classList.contains("cell")) {
-                //console.log(d3.event.target.parentElement)
               d3.event.target.parentElement.setAttribute("style", farg);
               }else if(d3.event.target.classList.contains("grow")){
                 d3.event.target.setAttribute("style", farg)
               };
-              border(d.country,"red")
+              border(d.country,"black")
               parcoords.highlight([d]) }});
 
     rows.on("click", function(d) {
@@ -180,7 +329,6 @@ d3.csv(file).then(function(data) {
         });
     rows.on("mouseout", function(d) {
       if (d3.event.target.classList.contains("cell")) {
-                //console.log(d3.event.target.parentElement)
               d3.event.target.parentElement.setAttribute("style", "color : black");
               }else if(d3.event.target.classList.contains("grow")){
                 d3.event.target.setAttribute("style", "color : black")
@@ -202,11 +350,9 @@ d3.csv(file).then(function(data) {
         delete cloneDims[f];
       })
       
-      //console.log(cloneDims)
       parcoords.dimensions(cloneDims)
 
     parcoords.render().updateAxes();
-      //console.log(d3.event.target.innerHTML)
       d3.keys(cloneDims).forEach( d=>{
       if (d!="country"){
       parcoords.scale(d, [0, 100])
@@ -214,13 +360,11 @@ d3.csv(file).then(function(data) {
     });
     });
       
-  // update data table on brush event
+
   parcoords.on("brush", function(d) {
-    //console.log(d);
-    //console.log(d);
-    // var newNodes = createNodes(d);
-     animator(d);
-     //svg.selectAll("text").raise();
+
+     animator(xScale,yScale,pointScale,d);
+     svg.selectAll("text").raise();
 
 
 
@@ -233,7 +377,6 @@ d3.csv(file).then(function(data) {
   rows.on("mouseover", function(d) {
               var farg = "color :"+colors(d.continent);
               if (d3.event.target.classList.contains("cell")) {
-                //console.log(d3.event.target.parentElement)
               d3.event.target.parentElement.setAttribute("style", farg);
               }else if(d3.event.target.classList.contains("grow")){
                 d3.event.target.setAttribute("style", farg)
@@ -241,12 +384,9 @@ d3.csv(file).then(function(data) {
               border(d.country,"red")
               parcoords.highlight([d]) });
 
-    rows.on("click", function(d) {
-              
-              deselect(d) });
     rows.on("mouseout", function(d) {
       if (d3.event.target.classList.contains("cell")) {
-                //console.log(d3.event.target.parentElement)
+
               d3.event.target.parentElement.setAttribute("style", "color : black");
               }else if(d3.event.target.classList.contains("grow")){
                 d3.event.target.setAttribute("style", "color : black")
@@ -254,23 +394,19 @@ d3.csv(file).then(function(data) {
               border(d.country,"none")
         parcoords.unhighlight();});
   });
-  //console.log(d3.select("#grid").selectAll("row").attr("adsf","blee"))
-  var animator = function(data){
+
+  var animator = function(xScale,yScale,pointScale,data){
   var u = svg.selectAll('circle')
     .data(data,(item,i,k)=> {
-  //console.log(countries)
-      //console.log(item,i,k,"wadå")
-        //console.log(item)
-        ////console.log(node)
-        knas = pixelLoc([Number(item.longitude),Number(item.latitude)])[0]
-        ////console.log(knas,pixelLoc,"här e knas")
+        knas = pixelLoc([parseFloat(item.longitude),parseFloat(item.latitude)])[0]
+
         item.x = xScale(knas);
-        ////console.log(node.x,'vadå')
-        extra = pixelLoc([Number(item.longitude),Number(item.latitude)])[1]
-        ////console.log(extra,pixelLoc)
+
+        extra = pixelLoc([parseFloat(item.longitude),parseFloat(item.latitude)])[1]
+
         item.y = yScale(extra);
-        ////console.log(node.y,'jamen')
-        item.radius = pointScale((Number(item.leader)));
+
+        item.radius = pointScale((parseFloat(item.leader)));
         
     return item})
     u.enter()
@@ -285,7 +421,7 @@ d3.csv(file).then(function(data) {
            return colors(d.continent)
           })
           .on("mouseover", function(d) {
-            border(d.country, "red");
+            border(d.country, "black");
             parcoords.highlight([d]);
           })
           .on("mouseout", function(d){
@@ -294,52 +430,58 @@ d3.csv(file).then(function(data) {
           });
     u.exit().remove();
 
-    var v = svg.selectAll('text')
-      .data(data)
+    var v = svg.selectAll('#label')
+      .data(data,(d)=> {return d.country;})
       
 
       v.enter().append('svg:text')
-        .text(function(d) {
+        .text(function(d,i,k) {
         return d.country;
         })
-        .attr('text-anchor',"middle");
+        .attr('text-anchor',"middle")
+        .attr('id', "label")
+        .on("mouseover", function(d) {
+            border(d.country, "black");
+            parcoords.highlight([d]);
+          })
+          .on("mouseout", function(d){
+            border(d.country,"none");
+          parcoords.unhighlight();
+          });
 
       v.exit().remove();
     
-      var simulation = d3.forceSimulation(data)
+       simulation = d3.forceSimulation(data)
+      
     .force('collision', d3.forceCollide().radius(function(d) {
       return d.radius
     }))
+    .alphaTarget(1)
     .on('tick', ticked);
   function ticked() {
     var k = svg.selectAll('circle')
-    k.merge(u)
-    .attr('cx', function(d) {
+    .attr('cx', function(d) { 
       return d.x
     })
     .attr('cy', function(d) {
       return d.y
-    
     })
-    var vv = svg.selectAll('text')
-      
-
-    vv.merge(v)
+      var vv = svg.selectAll('#label')
       .attr('x', function(d) {         if (isNaN(d.radius)) {
           return 0;
         }
-        ////console.log(node.radius,node.country)
+ 
         return d.x; })
       .attr('y', function(d) {        if (isNaN(d.radius)) {
           return 0;
         }
-        ////console.log(node.radius,node.country)
+
         return d.y+2; })
       .attr('opacity', function(d) {
         if (isNaN(d.radius)) {
           return 0;
         }
-        ////console.log(node.radius,node.country)
+
         return 1;
       });
       v.exit().remove();
@@ -348,22 +490,119 @@ d3.csv(file).then(function(data) {
   }
 
     }
-    animator(data);
-    //svg.selectAll("text").raise();
+    animator(xScale,yScale,pointScale,data);
+    svg.selectAll("#label").raise();
     var border = function(country,color1){
       var classen = "."+country.replace(" ","") 
-      //console.log(classen)
+
       var du = svg.select(classen).attr("stroke", color1);
     }
-
-    var deselect = function(){return 0};
     
+
+
+
+  var other = function(data1,first,second){
+          svg.selectAll(".axis-label").remove();
+          svg.selectAll("g").remove();
+          var coords = [];
+        var xs = [];
+        var ys = []
+        for (i = 0; i<data1.length;i++) {
+          xs.push(Number(data1[i][first]));
+          ys.push(Number(data1[i][second]));
+        }
+
+        var minX = d3.min(xs);
+        var maxX = d3.max(xs);
+
+      var xxScale = d3.scaleLinear().domain([minX,maxX]).range([50,width-50 ]);
+
+        var minY = d3.min(ys);
+        var maxY = d3.max(ys);
+        var yyScale = d3.scaleLinear().domain([minY,maxY]).range([height-30, 30]);
+        var ppointScale = d3.scaleSqrt().domain([0, 100]).range([0, 35]);
+
+        xAxis = d3.axisBottom(xxScale);
+        svg.append("g")
+          .attr("class", "xaxis")
+          .attr("transform", "translate(0," + (height-20) + ")")
+          .call(xAxis);
+
+      const yAxis = d3.axisLeft(yyScale);
+      svg.append("g")
+      .attr("class", "yaxis")
+      .attr("transform", "translate("+30+", 0 )")
+      .call(yAxis);
+
+    svg.append('g')
+    .attr('transform', 'translate(' + 40 + ', ' + (height/2) + ')')
+    .append('text')
+    .attr('text-anchor', 'middle')
+    .attr('class', 'axis-label')
+    .attr('transform', 'rotate(-90)')
+    .text((otherdim[second].title))
+    ;
+    svg.append('g')
+    .attr('transform', 'translate(' + (width/2) + ', ' + (height-21) + ')')
+    .append('text')
+    .attr('text-anchor', 'middle')
+    .attr('class', 'axis-label')
+    .text((otherdim[first].title))
+    ;
+      
+      svg.selectAll("circle")
+      .data(data1,d =>{
+        d.x = xxScale(Number(d[first]))
+        d.y = yyScale(Number(d[second]))
+        d.radius = ppointScale(Number(d.radius))
+        return d;
+      })
+      simulation.nodes(data1).alpha(1).restart();
+        //animator1(data);
+      }
+    var bytradie = function(ny){
+      simulation.stop();
+      var pointScale = d3.scaleSqrt().domain([0, 100]).range([0, 22]);
+      svg.selectAll("circle")
+      .data(data,d => {
+        d.radius = pointScale(Number(d[ny]));
+        return d.radius;
+      })
+      .attr('r', function(d) {
+      return d.radius
+    })
+    simulation.nodes(data).restart();
+    }
+    d3.select("#update").on('click',d => {
+      var sav = d3.select('#firstSelect').node()
+      var opt1 = sav.options[sav.selectedIndex].value;
+      var sav2 = d3.select('#secondSelect').node()
+      var opt2 = sav2.options[sav2.selectedIndex].value;
+      //var opt1 =  sel.options[sel.selectedIndex].value;
+      other(data,opt1,opt2)
+    })
+    d3.select("#byt").on('click',d => {
+      var sav = d3.select('#firstSelect').node()
+      var opt1 = sav.options[sav.selectedIndex].value;
+    bytradie(opt1,data);
+    })
+    //other(data,"leader","tech")
+  
 });
 };
-h2010('20155.csv');
+d3.select("#till2010").on('click',()=> h2010('20155.csv',3));
+d3.select("#till2005").on('click',()=> h2010('20055.csv',2));
+d3.select("#till2000").on('click',()=> h2010('20005.csv',1));
+d3.select("#till1995").on('click',()=> h2010('20000.csv',0));
+h2010('20155.csv',3);
 
 
-
-
+});
+function show1(){
+  document.getElementById('grid2').style.display ='none';
+}
+function show2(){
+  document.getElementById('grid2').style.display = 'block';
+}
 
 </script>
