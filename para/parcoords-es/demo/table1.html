@@ -70,6 +70,7 @@
   var padding = 10;
   var k;
   var node;
+  var updater;
 
   var pixelLoc = d3.geoMercator();
   var filter =[];
@@ -213,6 +214,7 @@ d3.csv("gap.csv").then( function (gap){
 
 
 var h2010 = function(file,year){
+  updater = false;
 //.map(d => {return { d : yearsep[year][d]}})
 var years = ["Year :1995-1998","Year :1999-2004","Year :2005-2009","Year :2010-2014"]
   d3.select("#Years").text(years[year]);
@@ -364,7 +366,17 @@ d3.select(".table1").remove();
 
   parcoords.on("brush", function(d) {
 
-     animator(xScale,yScale,pointScale,d);
+    animator(xScale,yScale,pointScale,d);
+    //svg.selectAll("text").remove();
+    svg.selectAll("g").remove();
+     if (updater){
+      var sav = d3.select('#firstSelect').node()
+      var opt1 = sav.options[sav.selectedIndex].value;
+      var sav2 = d3.select('#secondSelect').node()
+      var opt2 = sav2.options[sav2.selectedIndex].value;
+      //var opt1 =  sel.options[sel.selectedIndex].value;
+      other(data,opt1,opt2)
+     }
      svg.selectAll("text").raise();
 
 
@@ -503,6 +515,7 @@ d3.select(".table1").remove();
 
 
   var other = function(data1,first,second){
+          updater = true;
           svg.selectAll(".axis-label").remove();
           svg.selectAll("g").remove();
           var coords = [];
