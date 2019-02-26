@@ -365,10 +365,10 @@ d3.select(".table1").remove();
       
 
   parcoords.on("brush", function(d) {
-
-    animator(xScale,yScale,pointScale,d);
-    //svg.selectAll("text").remove();
+    svg.selectAll("text").remove();
     svg.selectAll("g").remove();
+    animator(xScale,yScale,pointScale,d);
+
      if (updater){
       var sav = d3.select('#firstSelect').node()
       var opt1 = sav.options[sav.selectedIndex].value;
